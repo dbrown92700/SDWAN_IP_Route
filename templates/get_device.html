@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Route Results</title>
+</head>
+<body>
+    <h1 style="margin-top: 30px; margin-left: 80px;">
+        Logged into: {{vmanage}}
+    </h1>
+    <p style="margin-left: 80px;"><a href="/">Change vManage</a></p>
+    <br>
+    <div style="margin-left: 80px;">
+    <form action="/iproute">
+        Device ID: <select name="device">
+        {{device_list}}
+        </select><br>
+        <input type="submit" value="Submit">
+    </form>
+    </div>
+</body>
+</html>

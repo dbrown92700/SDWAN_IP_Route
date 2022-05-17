@@ -1,0 +1,17 @@
+runtime: python38
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /.*
+  script: main.app
+
+libraries:
+- name: flask
+  version: 2.1.1
+- name: requests
+  version: 2.27.1
+- name: markupsafe
+  version: 2.1.1
+- name: pandas
+  version: 1.4.2

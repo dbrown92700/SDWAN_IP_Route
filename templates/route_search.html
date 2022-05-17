@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Route Results</title>
+</head>
+<body>
+    <h1 style="margin-top: 30px; margin-left: 80px;">
+        Logged into: {{vmanage}}
+    </h1>
+    <p style="margin-left: 80px;"><a href="/">Change vManage</a></p>
+    <br>
+    <div style="margin-left: 80px;">
+        Get route on device {{device}}.<br>
+        <form action="/result">
+            VPN:
+            <select name="vpn">
+            {{vpn_list}}
+            </select><br>
+            Prefix: <input type="text" name="prefix" value="172.16.1.0/24"><br>
+            <input type="hidden" name="device" value="{{device}}">
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+</body>
+</html>
