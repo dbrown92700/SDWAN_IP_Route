@@ -81,7 +81,6 @@ def get_device():
     vmanage.logout()
     device_list = ''
     for device in devices['data']:
-        print(device)
         if (device['reachability'] == 'reachable') and (device['personality'] == 'vedge'):
             device_list += f'<option value="{device["deviceId"]}|{device["version"]}">{device["host-name"]:20}{device["deviceId"]}</option>\n'
     return render_template('get_device.html', vmanage=request.cookies.get('vmanage'), device_list=Markup(device_list))
@@ -103,14 +102,11 @@ def get_target():
     except Exception as err:
         return render_template('error.html', err=err)
     interfaces = vmanage.get_request(f'device/interface/vpn?deviceId={device}')['data']
-    print(interfaces)
     vpns = []
     for interface in interfaces:
-        print(interface)
         if interface['vpnId'] not in vpns:
             vpns.append(interface['vpnId'])
     vmanage.logout()
-    print(vpns)
     vpn_list = ''
     vpns.sort()
     for vpn in vpns:
@@ -165,6 +161,7 @@ def list_routes():
         networks.append(new_prefix)
 
     # Generate CSV of matching results
+    paths = []
     for route in response['data']:
         if route[target] in networks:
             entry = []
@@ -177,15 +174,16 @@ def list_routes():
                     entry.append(str(value))
                 except KeyError:
                     entry.append('N/A')
-            result += ','.join(entry) + '\n'
+            paths.append(entry)
+    paths.reverse()
+    for route in paths:
+        result += ','.join(route) + '\n'
 
     #Generate Webpage
     result_html = read_csv(StringIO(result), keep_default_na=False).to_html()
-    page = '<html><body><a href="/device">Return</a><br><br>'
+    page = f'<a href="/iproute?device={device}|{version}">Search another network on this device</a><br>' \
+           f'<html><body><a href="/device">Choose another device</a><br><br>'
     page += result_html
-    if length > 0:
-        page += f'<br><a href="/result?vpn={vpn}&device={device}&prefix={".".join(new_octets)}/{length-1}">' \
-            'Next Longest Match</a><br>'
     page += '</body></html>'
 
     return Markup(page)
