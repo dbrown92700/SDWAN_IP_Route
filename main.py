@@ -17,8 +17,6 @@ __contributors__ = []
 __copyright__ = "Copyright (c) 2012 Cisco and/or its affiliates."
 __license__ = "Cisco Sample Code License, Version 1.1"
 
-import flask
-
 from vmanage_api import rest_api_lib
 from flask import Flask, request, make_response, render_template, redirect, url_for, session
 from markupsafe import Markup
@@ -30,6 +28,7 @@ app = Flask(__name__)
 app.secret_key = 'any random string'
 
 vedges = ['']
+
 
 ###########################################################################
 # Gets vManage variables from cookie and returns a vManage login object
@@ -86,15 +85,18 @@ def get_device():
         return render_template('error.html', err=err)
     devices = vmanage.get_request('device')
     vmanage.logout()
+    if not isinstance(devices, dict):
+        return render_template('error.html', err='Get devices returned invalid data. Check credentials.')
     device_list = ''
     for device in devices['data']:
         if (device['reachability'] == 'reachable') and (device['personality'] == 'vedge'):
-            device_list += f'<option value="{device["deviceId"]}|{device["version"]}">{device["host-name"]:20}{device["deviceId"]}</option>\n'
+            device_list += f'<option value="{device["deviceId"]}|{device["version"]}">{device["host-name"]:20}' \
+                           f'{device["deviceId"]}</option>\n'
     return render_template('get_device.html', vmanage=request.cookies.get('vmanage'), device_list=Markup(device_list))
 
 
 ###########################################################################
-#  Prompts user for route lookup values
+#  Prompts user for route lookup values: VPN and network
 ###########################################################################
 @app.route('/iproute')
 def get_target():
@@ -186,7 +188,7 @@ def list_routes():
     for route in paths:
         result += ','.join(route) + '\n'
 
-    #Generate Webpage
+    # Generate Webpage
     result_html = read_csv(StringIO(result), keep_default_na=False).to_html()
     page = f'<a href="/iproute?device={device}|{version}">Search another network on this device</a><br>' \
            f'<html><body><a href="/device">Choose another device</a><br><br>'
