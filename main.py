@@ -65,8 +65,12 @@ def get_vmanage():
 def save_vmanage():
 
     resp = make_response(redirect(url_for('get_device')))
+    items = {}
     for arg in request.args:
-        resp.set_cookie(arg, request.args.get(arg), secure=True, httponly=True)
+        items[arg] = request.args.get(arg)
+    items['vmanage'] = items['vmanage'].lstrip('https://').split('/')[0]
+    for arg in items:
+        resp.set_cookie(arg, items[arg], secure=True, httponly=True)
     return resp
 
 
