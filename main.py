@@ -67,7 +67,7 @@ def save_vmanage():
     items = {}
     for arg in request.args:
         items[arg] = request.args.get(arg)
-    items['vmanage'] = items['vmanage'].lstrip('https://').split('/')[0]
+    items['vmanage'] = items['vmanage'].replace('https://', '').split('/')[0]
     for arg in items:
         resp.set_cookie(arg, items[arg], secure=True, httponly=True)
     return resp
